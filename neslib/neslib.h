@@ -1,3 +1,5 @@
+#ifndef _NESLIB_H_
+#define _NESLIB_H_
 /*
     Hello, NES!
     Writes a message to the screen and plays a tone.
@@ -16,8 +18,6 @@
 */
 
 /* Includes */
-#include <stdarg.h>
-#include <stdlib.h>
 #include <nes.h>
 
 
@@ -134,61 +134,20 @@
 
 
 
-// write string
+// write strings
+extern const char* __ppu_str;             // used to store the string or fmtstring address then write to ppu_io();
+void __fastcall__ __write_string(void);   // writes the bytes pointed by __ppu_str to APU.vram.data
+void __write_fmtstring(const char* str, ...); // write string with fmt like prinf , (support %i, %s, %c), can hold 4 variadic arguments
+
+/* the macros are to avoid passing arguments to functions, as this can be a heavy operation */
+#define write_str(x, y, str) { ppu_set_cursor(x, y); __ppu_str = str; __write_string();  }
+#define write_fmtstr(x, y, str, ...) { ppu_set_cursor(x, y); __write_fmtstring(str, __VA_ARGS__); }
 
 
 
-static void __fastcall__ write_string(const uint8_t x, const uint8_t y, const char* str)
-{ 
-    ppu_set_cursor(x, y);
-    while(*str)
-    {
-        //ppu_io(*str);
-        PPU.vram.data = *str;
-        ++str;
-    }
-}
 
 
-static void write_fmtstring(const uint8_t x, const uint8_t y, 
-    const char* fmt, ...)
- { 
-    static uint8_t _i; static char* _s; static char cbuff[33];
-    static va_list args;
 
-    ppu_set_cursor(x, y);
-    va_start(args, fmt);
-    
-    while(*fmt)
-    {
-        if( (*fmt) != '%')
-            ppu_io(*fmt);
-        
-        else
-        {
-            ++fmt;
-            switch(*fmt)
-            {
-                case 'i': 
-                    itoa(va_arg(args, uint8_t), cbuff, 10); 
-                    _s = cbuff; 
-                    while(*_s) { ppu_io(*_s); ++_s; } 
-                    break;
-                
-                case 's': 
-                    _s = va_arg(args, char*); 
-                    while(*_s) { ppu_io(*_s); ++_s; } 
-                    break;
 
-                case 'c': 
-                    ppu_io(va_arg(args, uint8_t)); 
-                    break;
-            }
-        }
 
-        ++fmt;
-    }
-
-    va_end(args);
-}
-
+#endif

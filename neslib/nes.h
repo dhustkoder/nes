@@ -106,7 +106,7 @@
 struct __ppu {
     unsigned char control;
     unsigned char mask;                 /* color; show sprites, background */
-    signed char volatile const status;
+      signed char volatile const status;
     struct {
         unsigned char address;
         unsigned char data;
@@ -117,7 +117,6 @@ struct __ppu {
         unsigned char data;
     } vram;
 };
-
 #define PPU             (*(struct __ppu*)0x2000)
 #define SPRITE_DMA      (APU.sprite.dma)
 

@@ -11,14 +11,16 @@
 	.importzp	tmp1, tmp2, tmp3, tmp4, ptr1, ptr2, ptr3, ptr4
 	.macpack	longbranch
 	.forceimport	__STARTUP__
-	.import		_itoa
 	.import		_waitvblank
+	.import		___write_fmtstring
 	.export		_main
 
 .segment	"DATA"
 
-_dhust:
-	.addr	L007C
+_linex:
+	.byte	$01
+_amanda:
+	.addr	L0005
 _colors:
 	.byte	$05
 	.byte	$09
@@ -26,68 +28,16 @@ _colors:
 
 .segment	"RODATA"
 
-L007C:
-	.byte	$44,$68,$75,$73,$74,$4B,$6F,$64,$65,$72,$21,$00
-L00A0:
-	.byte	$61,$00
+L0005:
+	.byte	$54,$65,$20,$61,$6D,$6F,$20,$41,$6D,$61,$6E,$64,$61,$20,$53,$61
+	.byte	$21,$00
+L0053:
+	.byte	$25,$63,$20,$00
 
 .segment	"BSS"
 
 _x:
 	.res	1,$00
-
-; ---------------------------------------------------------------
-; void __near__ __fastcall__ write_string (const unsigned char, const unsigned char, __near__ const unsigned char *)
-; ---------------------------------------------------------------
-
-.segment	"CODE"
-
-.proc	_write_string: near
-
-.segment	"CODE"
-
-	jsr     pushax
-	ldy     #$02
-	ldx     #$00
-	lda     (sp),y
-	lsr     a
-	lsr     a
-	lsr     a
-	ldy     #$20
-	jsr     incaxy
-	sta     $2006
-	ldy     #$02
-	lda     (sp),y
-	asl     a
-	asl     a
-	asl     a
-	asl     a
-	asl     a
-	sta     ptr1
-	iny
-	lda     (sp),y
-	clc
-	adc     ptr1
-	sta     $2006
-	jmp     L0012
-L0010:	jsr     ldax0sp
-	sta     ptr1
-	stx     ptr1+1
-	ldy     #$00
-	lda     (ptr1),y
-	sta     $2007
-	ldx     #$00
-	lda     #$01
-	jsr     addeq0sp
-L0012:	jsr     ldax0sp
-	sta     ptr1
-	stx     ptr1+1
-	ldy     #$00
-	lda     (ptr1),y
-	bne     L0010
-	jmp     incsp4
-
-.endproc
 
 ; ---------------------------------------------------------------
 ; void __near__ main (void)
@@ -104,7 +54,7 @@ L0012:	jsr     ldax0sp
 	sta     $2006
 	lda     #$00
 	sta     $2006
-	lda     #$18
+	lda     #$05
 	sta     $2007
 	lda     #$3F
 	sta     $2006
@@ -112,17 +62,62 @@ L0012:	jsr     ldax0sp
 	sta     $2006
 	lda     #$01
 	sta     $2007
-	jsr     pusha
-	jsr     pusha
-	lda     #<(L00A0)
-	ldx     #>(L00A0)
-	jsr     _write_string
+L0026:	lda     #$01
+	sta     $4016
 	lda     #$00
-	sta     $2005
+	sta     $4016
+	sta     _x
+L0068:	lda     _x
+	cmp     #$08
+	bcs     L0026
+	lda     _amanda
+	sta     ptr1
+	lda     _amanda+1
+	sta     ptr1+1
+	ldy     #$00
+	lda     (ptr1),y
+	beq     L006E
+	lda     $4016
+	and     #$01
+	beq     L006C
+	lda     _x
+	cmp     #$03
+	bne     L006C
+	lda     #$20
+	sta     $2006
+	ldx     #$00
+	lda     _linex
+	pha
+	clc
+	adc     #$01
+	sta     _linex
+	pla
+	ldy     #$C0
+	jsr     incaxy
+	sta     $2006
+	lda     #<(L0053)
+	ldx     #>(L0053)
+	jsr     pushax
+	lda     _amanda
+	ldx     _amanda+1
+	sta     regsave
+	stx     regsave+1
+	jsr     incax1
+	sta     _amanda
+	stx     _amanda+1
+	ldx     #$00
+	lda     (regsave,x)
+	jsr     pusha0
+	ldy     #$04
+	jsr     ___write_fmtstring
+	jmp     L0026
+L006C:	inc     _x
+	jmp     L0068
+L006E:	sta     $2005
 	sta     $2005
 	lda     #$08
 	sta     $2001
-L00B3:	jmp     L00B3
+L0067:	jmp     L0067
 
 .endproc
 
