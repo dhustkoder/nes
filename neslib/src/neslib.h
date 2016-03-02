@@ -17,6 +17,9 @@
     target files for NES.
 */
 
+
+/* Contribution by DhustKoder, extending this file */
+
 /* Includes */
 #include <nes.h>
 
@@ -75,11 +78,7 @@
 
 
 
-
-
-
-/* contribution by DhustKoder:  */
- // static assert
+// static assert
 #define static_assert(x) static const static_assert_arr[x];
 
 
@@ -130,16 +129,29 @@
  #define YELLOW   0x28
  #define LYELLOW  0x29
 
+extern const unsigned char* __ppu_str; // a u character ptr, point to strs
+extern uint8_t __cbuff[6]; // a buffer of 6, 8bit values to be used for general purpose
 
-
-
+// read input functions:
+int __fastcall__ __iskey_pressed_pad1(void);
+int __fastcall__ __iskey_pressed_pad2(void);
+void __fastcall__ __wait_key_press_pad1(void);
+void __fastcall__ __wait_key_press_pad2(void);
 
 // write strings
-extern const char* __ppu_str;             // used to store the string or fmtstring address then write to ppu_io();
-void __fastcall__ __write_string(void);   // writes the bytes pointed by __ppu_str to APU.vram.data
+                 // used to store the string or fmtstring address then write to ppu_io();
+void __fastcall__ __write_string(void);       // writes the bytes pointed by __ppu_str to APU.vram.data
 void __write_fmtstring(const char* str, ...); // write string with fmt like prinf , (support %i, %s, %c), can hold 4 variadic arguments
 
 /* the macros are to avoid passing arguments to functions, as this can be a heavy operation */
+
+// input functions:
+#define iskey_pressed_pad1(key) { __cbuff[0] = key; __iskey_pressed_pad1(); }
+#define iskey_pressed_pad2(key) { __cbuff[0] = key; __iskey_pressed_pad1(); }
+#define wait_key_press_pad1(key) { __cbuff[0] = key; __wait_key_press_pad1(); }
+#define wait_key_press_pad2(key) { __cbuff[0] = key; __wait_key_press_pad2(); }
+
+// write strings functions:
 #define write_str(x, y, str) { ppu_set_cursor(x, y); __ppu_str = str; __write_string();  }
 #define write_fmtstr(x, y, str, ...) { ppu_set_cursor(x, y); __write_fmtstring(str, __VA_ARGS__); }
 

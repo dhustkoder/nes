@@ -12,7 +12,10 @@
 	.macpack	longbranch
 	.forceimport	__STARTUP__
 	.import		_waitvblank
-	.import		___write_fmtstring
+	.import		___ppu_str
+	.import		___cbuff
+	.import		___wait_key_press_pad1
+	.import		___write_string
 	.export		_main
 
 .segment	"DATA"
@@ -20,7 +23,7 @@
 _linex:
 	.byte	$01
 _amanda:
-	.addr	L0005
+	.addr	L0006
 _colors:
 	.byte	$05
 	.byte	$09
@@ -28,11 +31,9 @@ _colors:
 
 .segment	"RODATA"
 
-L0005:
+L0006:
 	.byte	$54,$65,$20,$61,$6D,$6F,$20,$41,$6D,$61,$6E,$64,$61,$20,$53,$61
 	.byte	$21,$00
-L0053:
-	.byte	$25,$63,$20,$00
 
 .segment	"BSS"
 
@@ -62,62 +63,24 @@ _x:
 	sta     $2006
 	lda     #$01
 	sta     $2007
-L0026:	lda     #$01
-	sta     $4016
-	lda     #$00
-	sta     $4016
-	sta     _x
-L0068:	lda     _x
-	cmp     #$08
-	bcs     L0026
-	lda     _amanda
-	sta     ptr1
-	lda     _amanda+1
-	sta     ptr1+1
-	ldy     #$00
-	lda     (ptr1),y
-	beq     L006E
-	lda     $4016
-	and     #$01
-	beq     L006C
-	lda     _x
-	cmp     #$03
-	bne     L006C
+	lda     #$03
+	sta     ___cbuff
+	jsr     ___wait_key_press_pad1
 	lda     #$20
 	sta     $2006
-	ldx     #$00
-	lda     _linex
-	pha
-	clc
-	adc     #$01
-	sta     _linex
-	pla
-	ldy     #$C0
-	jsr     incaxy
+	lda     #$85
 	sta     $2006
-	lda     #<(L0053)
-	ldx     #>(L0053)
-	jsr     pushax
 	lda     _amanda
-	ldx     _amanda+1
-	sta     regsave
-	stx     regsave+1
-	jsr     incax1
-	sta     _amanda
-	stx     _amanda+1
-	ldx     #$00
-	lda     (regsave,x)
-	jsr     pusha0
-	ldy     #$04
-	jsr     ___write_fmtstring
-	jmp     L0026
-L006C:	inc     _x
-	jmp     L0068
-L006E:	sta     $2005
+	sta     ___ppu_str
+	lda     _amanda+1
+	sta     ___ppu_str+1
+	jsr     ___write_string
+	lda     #$00
+	sta     $2005
 	sta     $2005
 	lda     #$08
 	sta     $2001
-L0067:	jmp     L0067
+L004B:	jmp     L004B
 
 .endproc
 
