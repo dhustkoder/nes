@@ -146,8 +146,8 @@ void __write_fmtstring(const char* str, ...); // write string with fmt like prin
 /* the macros are to avoid passing arguments to functions, as this can be a heavy operation */
 
 // input functions:
-#define iskey_pressed_pad1(key) { __cbuff[0] = key; __iskey_pressed_pad1(); }
-#define iskey_pressed_pad2(key) { __cbuff[0] = key; __iskey_pressed_pad1(); }
+#define iskey_pressed_pad1(key)  ( (__cbuff[0] = key), (__iskey_pressed_pad1()) )
+#define iskey_pressed_pad2(key)  ( (__cbuff[0] = key), (__iskey_pressed_pad2() ) )
 #define wait_key_press_pad1(key) { __cbuff[0] = key; __wait_key_press_pad1(); }
 #define wait_key_press_pad2(key) { __cbuff[0] = key; __wait_key_press_pad2(); }
 

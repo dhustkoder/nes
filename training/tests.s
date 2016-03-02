@@ -14,7 +14,7 @@
 	.import		_waitvblank
 	.import		___ppu_str
 	.import		___cbuff
-	.import		___wait_key_press_pad1
+	.import		___iskey_pressed_pad1
 	.import		___write_string
 	.export		_main
 
@@ -22,8 +22,9 @@
 
 _linex:
 	.byte	$01
-_amanda:
-	.addr	L0006
+_strs:
+	.addr	L0007
+	.addr	L0009
 _colors:
 	.byte	$05
 	.byte	$09
@@ -31,9 +32,10 @@ _colors:
 
 .segment	"RODATA"
 
-L0006:
-	.byte	$54,$65,$20,$61,$6D,$6F,$20,$41,$6D,$61,$6E,$64,$61,$20,$53,$61
-	.byte	$21,$00
+L0009:
+	.byte	$53,$74,$72,$69,$74,$65,$72,$20,$56,$65,$67,$65,$74,$61,$21,$00
+L0007:
+	.byte	$53,$74,$72,$69,$74,$65,$72,$20,$41,$6C,$66,$61,$21,$00
 
 .segment	"BSS"
 
@@ -63,24 +65,41 @@ _x:
 	sta     $2006
 	lda     #$01
 	sta     $2007
-	lda     #$03
-	sta     ___cbuff
-	jsr     ___wait_key_press_pad1
+	lda     #$00
+L0072:	sta     ___cbuff
+	jsr     ___iskey_pressed_pad1
+	stx     tmp1
+	ora     tmp1
+	beq     L002E
 	lda     #$20
 	sta     $2006
-	lda     #$85
+	lda     #$41
 	sta     $2006
-	lda     _amanda
+	lda     _strs
 	sta     ___ppu_str
-	lda     _amanda+1
-	sta     ___ppu_str+1
+	lda     _strs+1
+	jmp     L0073
+L002E:	lda     #$01
+	sta     ___cbuff
+	jsr     ___iskey_pressed_pad1
+	stx     tmp1
+	ora     tmp1
+	beq     L0072
+	lda     #$20
+	sta     $2006
+	lda     #$41
+	sta     $2006
+	lda     _strs+2
+	sta     ___ppu_str
+	lda     _strs+2+1
+L0073:	sta     ___ppu_str+1
 	jsr     ___write_string
 	lda     #$00
 	sta     $2005
 	sta     $2005
 	lda     #$08
 	sta     $2001
-L004B:	jmp     L004B
+L0070:	jmp     L0070
 
 .endproc
 

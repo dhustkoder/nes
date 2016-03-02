@@ -45,21 +45,21 @@ _args:
 	sta     $4016
 	sta     ___cbuff+3
 	tax
-L0105:	lda     ___cbuff+3
-	cmp     #$08
-	bcs     L000E
-	lda     ___cbuff
-	cmp     ___cbuff+3
-	bne     L001B
+L00E0:	lda     ___cbuff+3
+	cmp     ___cbuff
+	txa
+	sbc     #$00
+	bcs     L00E1
 	lda     $4016
+	; REMOVED ;
+	inc     ___cbuff+3
+	jmp     L00E0
+L00E1:	lda     $4016
 	and     #$01
-	beq     L0107
+	beq     L00E3
 	lda     #$01
 	rts
-L0107:	rts
-L001B:	inc     ___cbuff+3
-	jmp     L0105
-L000E:	rts
+L00E3:	rts
 
 .endproc
 
@@ -77,23 +77,7 @@ L000E:	rts
 	sta     $4016
 	lda     #$00
 	sta     $4016
-	sta     ___cbuff+3
-	tax
-L0109:	lda     ___cbuff+3
-	cmp     #$08
-	bcs     L0038
-	lda     ___cbuff
-	cmp     ___cbuff+3
-	bne     L0045
-	lda     $4017
-	and     #$01
-	beq     L010B
-	lda     #$01
 	rts
-L010B:	rts
-L0045:	inc     ___cbuff+3
-	jmp     L0109
-L0038:	rts
 
 .endproc
 
@@ -107,25 +91,24 @@ L0038:	rts
 
 .segment	"CODE"
 
-L0059:	lda     #$01
+L0035:	lda     #$01
 	sta     $4016
 	lda     #$00
 	sta     $4016
 	sta     ___cbuff+3
-L010D:	lda     ___cbuff+3
+L00E5:	lda     ___cbuff+3
 	cmp     #$08
-	bcs     L0063
+	bcs     L003F
 	lda     ___cbuff
 	cmp     ___cbuff+3
-	bne     L010E
+	bne     L00E6
 	lda     $4016
 	and     #$01
-	beq     L0059
+	beq     L0035
 	rts
-L010E:	inc     ___cbuff+3
-	lda     $4016           ; hand written, advance to next key
-	jmp     L010D
-L0063:	rts
+L00E6:	inc     ___cbuff+3
+	jmp     L00E5
+L003F:	rts
 
 .endproc
 
@@ -139,25 +122,24 @@ L0063:	rts
 
 .segment	"CODE"
 
-L0081:	lda     #$01
+L005D:	lda     #$01
 	sta     $4016
 	lda     #$00
 	sta     $4016
 	sta     ___cbuff+3
-L0110:	lda     ___cbuff+3
+L00E8:	lda     ___cbuff+3
 	cmp     #$08
-	bcs     L008B
+	bcs     L0067
 	lda     ___cbuff
 	cmp     ___cbuff+3
-	bne     L0111
+	bne     L00E9
 	lda     $4017
 	and     #$01
-	beq     L0081
+	beq     L005D
 	rts
-L0111:	inc     ___cbuff+3
-	lda     $4017          ; hand written, advance to next key
-	jmp     L0110
-L008B:	rts
+L00E9:	inc     ___cbuff+3
+	jmp     L00E8
+L0067:	rts
 
 .endproc
 
@@ -171,8 +153,8 @@ L008B:	rts
 
 .segment	"CODE"
 
-	jmp     L00AB
-L00A9:	lda     ___ppu_str
+	jmp     L0087
+L0085:	lda     ___ppu_str
 	sta     ptr1
 	lda     ___ppu_str+1
 	sta     ptr1+1
@@ -180,15 +162,15 @@ L00A9:	lda     ___ppu_str
 	lda     (ptr1),y
 	sta     $2007
 	inc     ___ppu_str
-	bne     L00AB
+	bne     L0087
 	inc     ___ppu_str+1
-L00AB:	lda     ___ppu_str
+L0087:	lda     ___ppu_str
 	sta     ptr1
 	lda     ___ppu_str+1
 	sta     ptr1+1
 	ldy     #$00
 	lda     (ptr1),y
-	bne     L00A9
+	bne     L0085
 	rts
 
 .endproc
@@ -210,8 +192,8 @@ L00AB:	lda     ___ppu_str
 	jsr     decax1
 	sta     _args
 	stx     _args+1
-	jmp     L0116
-L0113:	lda     (sp),y
+	jmp     L00EE
+L00EB:	lda     (sp),y
 	jsr     leaa0sp
 	jsr     decax1
 	jsr     ldaxi
@@ -220,7 +202,7 @@ L0113:	lda     (sp),y
 	ldy     #$00
 	lda     (ptr1),y
 	cmp     #$25
-	beq     L0114
+	beq     L00EC
 	lda     (sp),y
 	jsr     leaa0sp
 	jsr     decax1
@@ -228,8 +210,8 @@ L0113:	lda     (sp),y
 	sta     ptr1
 	stx     ptr1+1
 	ldy     #$00
-	jmp     L0117
-L0114:	lda     (sp),y
+	jmp     L00EF
+L00EC:	lda     (sp),y
 	jsr     leaa0sp
 	jsr     decax1
 	jsr     pushax
@@ -246,19 +228,19 @@ L0114:	lda     (sp),y
 	ldy     #$00
 	lda     (ptr1),y
 	cmp     #$63
-	jeq     L00F7
+	jeq     L00D3
 	cmp     #$69
-	beq     L00C9
+	beq     L00A5
 	cmp     #$73
-	beq     L00E2
-	jmp     L0115
-L00C9:	lda     _args
+	beq     L00BE
+	jmp     L00ED
+L00A5:	lda     _args
 	sec
 	sbc     #$02
 	sta     _args
-	bcs     L00D1
+	bcs     L00AD
 	dec     _args+1
-L00D1:	ldx     _args+1
+L00AD:	ldx     _args+1
 	sta     ptr1
 	stx     ptr1+1
 	lda     (ptr1),y
@@ -273,64 +255,64 @@ L00D1:	ldx     _args+1
 	sta     ___ppu_str
 	lda     #>(___cbuff)
 	sta     ___ppu_str+1
-	jmp     L00D8
-L00D6:	lda     ___ppu_str
+	jmp     L00B4
+L00B2:	lda     ___ppu_str
 	sta     ptr1
 	lda     ___ppu_str+1
 	sta     ptr1+1
 	lda     (ptr1),y
 	sta     $2007
 	inc     ___ppu_str
-	bne     L00D8
+	bne     L00B4
 	inc     ___ppu_str+1
-L00D8:	lda     ___ppu_str
+L00B4:	lda     ___ppu_str
 	sta     ptr1
 	lda     ___ppu_str+1
 	sta     ptr1+1
 	ldy     #$00
 	lda     (ptr1),y
-	bne     L00D6
-	jmp     L0115
-L00E2:	lda     _args
+	bne     L00B2
+	jmp     L00ED
+L00BE:	lda     _args
 	sec
 	sbc     #$02
 	sta     _args
-	bcs     L00EA
+	bcs     L00C6
 	dec     _args+1
-L00EA:	ldx     _args+1
+L00C6:	ldx     _args+1
 	jsr     ldaxi
 	sta     ___ppu_str
 	stx     ___ppu_str+1
-	jmp     L00ED
-L00EB:	lda     ___ppu_str
+	jmp     L00C9
+L00C7:	lda     ___ppu_str
 	sta     ptr1
 	lda     ___ppu_str+1
 	sta     ptr1+1
 	lda     (ptr1),y
 	sta     $2007
 	inc     ___ppu_str
-	bne     L00ED
+	bne     L00C9
 	inc     ___ppu_str+1
-L00ED:	lda     ___ppu_str
+L00C9:	lda     ___ppu_str
 	sta     ptr1
 	lda     ___ppu_str+1
 	sta     ptr1+1
 	ldy     #$00
 	lda     (ptr1),y
-	bne     L00EB
-	jmp     L0115
-L00F7:	lda     _args
+	bne     L00C7
+	jmp     L00ED
+L00D3:	lda     _args
 	sec
 	sbc     #$02
 	sta     _args
-	bcs     L0102
+	bcs     L00DE
 	dec     _args+1
-L0102:	ldx     _args+1
+L00DE:	ldx     _args+1
 	sta     ptr1
 	stx     ptr1+1
-L0117:	lda     (ptr1),y
+L00EF:	lda     (ptr1),y
 	sta     $2007
-L0115:	lda     (sp),y
+L00ED:	lda     (sp),y
 	jsr     leaa0sp
 	jsr     decax1
 	jsr     pushax
@@ -338,7 +320,7 @@ L0115:	lda     (sp),y
 	jsr     incax1
 	ldy     #$00
 	jsr     staxspidx
-L0116:	lda     (sp),y
+L00EE:	lda     (sp),y
 	jsr     leaa0sp
 	jsr     decax1
 	jsr     ldaxi
@@ -347,7 +329,7 @@ L0116:	lda     (sp),y
 	ldy     #$00
 	ldx     #$00
 	lda     (ptr1),y
-	jne     L0113
+	jne     L00EB
 	jmp     leave
 
 .endproc

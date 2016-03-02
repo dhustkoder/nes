@@ -29,17 +29,19 @@ int __fastcall__ __iskey_pressed_pad1(void)
 	__asm__("STA $4016"); // store A into controller port 1 
 	__asm__("LDA #$00");  // then load 0 into A reg
 	__asm__("STA $4016"); // store A into controller port 1 ; tells the cpu to get controller new status
+		
 	
-	// here I'll use cbuff[0] as a counter, to save memory
-	for(i = 0; i < 8; ++i )
+	// load the controller port to the A until the right key
+	for(i = 0; i < key; ++i) 
 	{
-		if( i == key )
-		{
-			if(( JOYPAD[0] & 0x1 ) != 0) return 1;
-			else return 0;
-		}
-		else __asm__("LDA $4016"); // advance key
+		__asm__("LDA $4016");
+		__asm__("STA %v + 5 ; <= REMOVE ME ;", __cbuff); 
+		// this line need to be removed from .s file
+		// it is here just for the first __asm__ be not removed;
 	}
+
+	if(( JOYPAD[0] & 0x1 ) != 0) return 1;
+	else return 0;
 }
 
 
@@ -51,16 +53,6 @@ int __fastcall__ __iskey_pressed_pad2(void)
 	__asm__("LDA #$00");  // then load 0 into A reg
 	__asm__("STA $4016"); // store A into controller port 1 ; tells the cpu to get controller new status
 	
-	// here I'll use cbuff[0] as a counter, to save memory
-	for(i = 0; i < 8 ; ++i )
-	{
-		if( i == key )
-		{
-			if(( JOYPAD[1] & 0x1 ) != 0) return 1;
-			else return 0;
-		}
-		else __asm__ ("LDA $4017"); // advance key
-	}
 }
 
 
