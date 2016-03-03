@@ -4,7 +4,7 @@
 extern void __fastcall__ func(void);
 
 static unsigned char x, linex = 1;
-static const char* strs[2] = { "Striter Alfa!", "Striter Vegeta!" };
+static const char* strs[2] = { "A", "B" };
 static unsigned char colors[] = {RED, GREEN, BLUE};
 
 void main(void) 
@@ -14,24 +14,12 @@ void main(void)
 
 	ppu_set_color_back(RED);
 	ppu_set_color_text(BLUE);
+
+	wait_keypress_pad1( 3 );
+
+	write_fmtstr(1, 2, " Te amo <3 Amanda sa!", 0);		
 	
-	while(1)
-	{ 	
-		if( iskey_pressed_pad1(0) ) // A
-		{
-			write_str(1, 2, strs[0]);
-			break;
-		}
-		
-		if( iskey_pressed_pad1(1) ) // B
-		{
-			write_str(1, 2, strs[1] );
-			break;
-		}
-
-	}
-
-
+	
 	ppu_set_scroll(0, 0);
 	poke(PPU_CTRL2, 8);
 

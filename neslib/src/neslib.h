@@ -10,15 +10,13 @@
     Modified slightly by Anton Maurovic (2013) for:
     http://anton.maurovic.com/posts/nintendo-nes-gamedev-part-1-setting-up/
 
-    Build with cc65 as follows:
-        cl65 -t nes hello-nes.c -o hello.nes
+	Modified & extended by Contribution by DhustKoder ( 2016 ) for 'neslib':
+	https://github.com/dhustkoder/nes
 
-    This example will use a default CHR ROM that comes with the cc65
-    target files for NES.
 */
 
 
-/* Contribution by DhustKoder, extending this file */
+/*  */
 
 /* Includes */
 #include <nes.h>
@@ -78,17 +76,17 @@
 
 
 
-// static assert
-#define static_assert(x) static const static_assert_arr[x];
+/* static assert */
+#define static_assert(x) const static_assert_arr[x ? -1 : 1];
 
 
 
- // typedefs
- typedef unsigned char uint8_t;
- typedef char int8_t;
+/* typedefs */
+typedef unsigned char uint8_t;
+typedef char int8_t;
 
 
- // Colors , not all colors, but some most used
+ /* Colors , not all colors, but some most used */
 
  #define GRAY     0x00
  #define BLUE     0x01
@@ -129,29 +127,36 @@
  #define YELLOW   0x28
  #define LYELLOW  0x29
 
-extern const unsigned char* __ppu_str; // a u character ptr, point to strs
-extern uint8_t __cbuff[6]; // a buffer of 6, 8bit values to be used for general purpose
 
-// read input functions:
+
+
+
+extern const unsigned char* __ppu_str; /* a u character ptr, point to strs */
+extern uint8_t __cbuff[6];             /* a buffer of 6, 8bit values to be used for general purpose */
+
+/* read input functions: */
 int __fastcall__ __iskey_pressed_pad1(void);
 int __fastcall__ __iskey_pressed_pad2(void);
 void __fastcall__ __wait_key_press_pad1(void);
 void __fastcall__ __wait_key_press_pad2(void);
 
-// write strings
-                 // used to store the string or fmtstring address then write to ppu_io();
-void __fastcall__ __write_string(void);       // writes the bytes pointed by __ppu_str to APU.vram.data
-void __write_fmtstring(const char* str, ...); // write string with fmt like prinf , (support %i, %s, %c), can hold 4 variadic arguments
+/* write strings */
+void __fastcall__ __write_string(void);         /* writes the bytes pointed by __ppu_str to APU.vram.data */
+
+void __write_fmtstring(const char* str, ...);   /* write string with fmt like prinf , (support %i, %s, %c), can hold 4 variadic arguments 
+						  __write_fmtstring is still pretty heavy function, consider this before using it in a loop */
+
 
 /* the macros are to avoid passing arguments to functions, as this can be a heavy operation */
 
-// input functions:
-#define iskey_pressed_pad1(key)  ( (__cbuff[0] = key), (__iskey_pressed_pad1()) )
-#define iskey_pressed_pad2(key)  ( (__cbuff[0] = key), (__iskey_pressed_pad2() ) )
-#define wait_key_press_pad1(key) { __cbuff[0] = key; __wait_key_press_pad1(); }
-#define wait_key_press_pad2(key) { __cbuff[0] = key; __wait_key_press_pad2(); }
+/* input macros: */
+#define iskey_pressed_pad1(key)  ( (__cbuff[0] = key), (__iskey_pressed_pad1())  )
+#define iskey_pressed_pad2(key)  ( (__cbuff[0] = key), (__iskey_pressed_pad2())  )
+#define wait_keypress_pad1(key)  { __cbuff[0] = key; __wait_key_press_pad1(); }
+#define wait_keypress_pad2(key)  ( (__cbuff[0] = key), (__wait_key_press_pad2()) )
 
-// write strings functions:
+
+/* write strings macros: */
 #define write_str(x, y, str) { ppu_set_cursor(x, y); __ppu_str = str; __write_string();  }
 #define write_fmtstr(x, y, str, ...) { ppu_set_cursor(x, y); __write_fmtstring(str, __VA_ARGS__); }
 

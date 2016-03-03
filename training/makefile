@@ -3,7 +3,6 @@
 
 
 compile:
-	cc65 -tnes tests2.c -I../neslib/include -O3
 	cc65 -tnes tests.c  -I../neslib/include -O3
 	ca65 -tnes tests2.s
 	ca65 -tnes tests.s 

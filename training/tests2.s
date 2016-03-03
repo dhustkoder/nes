@@ -16,8 +16,8 @@
 
 .segment	"RODATA"
 
-L0012:
-	.byte	$25,$69,$00
+string:
+	.byte	'h','i',$00
 
 ; ---------------------------------------------------------------
 ; void __near__ __fastcall__ func (void)
@@ -33,14 +33,14 @@ L0012:
 	sta     $2006
 	lda     #$C1
 	sta     $2006
-	lda     #<(L0012)
-	ldx     #>(L0012)
+	lda     #<(string)
+	ldx     #>(string)
 	jsr     pushax
 	lda     #<(___ppu_str)
 	ldx     #>(___ppu_str)
 	jsr     pushax
 	ldy     #$04
-	jmp     ___write_fmtstring
+	jmp     ___write_string
 
 .endproc
 

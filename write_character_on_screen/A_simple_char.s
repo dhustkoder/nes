@@ -12,37 +12,45 @@
 	.macpack	longbranch
 	.forceimport	__STARTUP__
 	.import		_waitvblank
-	.import		___cbuff
-	.import		___wait_key_press_pad1
-	.import		___write_fmtstring
+	.export		_foo
 	.export		_main
-
-.segment	"DATA"
-
-_linex:
-	.byte	$01
-_strs:
-	.addr	L0007
-	.addr	L0009
-_colors:
-	.byte	$05
-	.byte	$09
-	.byte	$01
 
 .segment	"RODATA"
 
-L003C:
-	.byte	$20,$54,$65,$20,$61,$6D,$6F,$20,$3C,$33,$20,$41,$6D,$61,$6E,$64
-	.byte	$61,$20,$73,$61,$21,$00
-L0009:
-	.byte	$42,$00
-L0007:
-	.byte	$41,$00
-
-.segment	"BSS"
-
 _x:
-	.res	1,$00
+	.byte	$41
+	.byte	$42
+	.byte	$43
+
+; ---------------------------------------------------------------
+; void __near__ foo (void)
+; ---------------------------------------------------------------
+
+.segment	"CODE"
+
+.proc	_foo: near
+
+.segment	"CODE"
+
+	lda     #$20
+	sta     $2006
+	lda     #$00
+	sta     $2006
+	lda     #$20
+	sta     $2006
+	lda     #$21
+	sta     $2006
+	lda     #$3F
+	sta     $2005
+	lda     #$03
+	sta     $2005
+	lda     #$01
+	sta     $2007
+	lda     #$41
+	sta     $2007
+	rts
+
+.endproc
 
 ; ---------------------------------------------------------------
 ; void __near__ main (void)
@@ -55,37 +63,20 @@ _x:
 .segment	"CODE"
 
 	jsr     _waitvblank
+	jsr     _foo
 	lda     #$3F
 	sta     $2006
 	lda     #$00
 	sta     $2006
-	lda     #$05
-	sta     $2007
-	lda     #$3F
-	sta     $2006
 	lda     #$03
-	sta     $2006
-	lda     #$01
 	sta     $2007
-	lda     #$03
-	sta     ___cbuff
-	jsr     ___wait_key_press_pad1
-	lda     #$20
-	sta     $2006
-	lda     #$41
-	sta     $2006
-	lda     #<(L003C)
-	ldx     #>(L003C)
-	jsr     pushax
-	jsr     push0
-	ldy     #$04
-	jsr     ___write_fmtstring
+	jsr     _foo
 	lda     #$00
 	sta     $2005
 	sta     $2005
 	lda     #$08
 	sta     $2001
-L004F:	jmp     L004F
+L0042:	jmp     L0042
 
 .endproc
 
