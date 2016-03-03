@@ -15,9 +15,6 @@
 
 */
 
-
-/*  */
-
 /* Includes */
 #include <nes.h>
 
