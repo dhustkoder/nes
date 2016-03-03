@@ -38,8 +38,7 @@ void __fastcall__ loadkey_pad1(void)
 
 	for(i = 0; i < key ; ++i ) 
 	{
-		__asm__("LDA $4016"); 
-		__asm__("STA %v + 5 ; REMOVE ME ;", __cbuff);
+		__asm__("bit $4016"); 
 	}	
 }
 

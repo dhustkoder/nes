@@ -11,7 +11,7 @@
 
 extern void waitvblank(void);
 typedef unsigned char uint8_t;
-const unsigned char *str = "ABC";
+static const unsigned char str[] = { 'A' , 'B', 'C' };
 
 void foo(void)
 {

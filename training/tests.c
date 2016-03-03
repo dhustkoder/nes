@@ -17,7 +17,7 @@ void main(void)
 
 	wait_keypress_pad1( 3 );
 
-	write_fmtstr(1, 2, " Te amo <3 Amanda sa!", 0);		
+	write_fmtstr(1, 2, " %c ", *strs);		
 	
 	
 	ppu_set_scroll(0, 0);
