@@ -1,23 +1,18 @@
 
-
-
 /* 
  *	these are the memory addresses that we're going to need
  *	they correspond to PPU inside NES 
  */
 
-#define PPU_VRAM_ADDR1  (*((uint8_t*)0x2005))   /* this PPU SCROLL , can be used for scroll the screen */
-#define PPU_VRAM_ADDR2 (*((uint8_t*)0x2006))	/* this PPU ADR, can be use to set the cursor , x/y offset */
-#define PPU_VRAM_DATA (*((uint8_t*)0x2007))	/* this PPU IO, can be used to write to the last addr puted in  PPU ADR */
+#define PPU_VRAM_ADDR1  (*((uint8_t*)0x2005))   /* this PPU SCROLL , can be used for scroll the screen                  */
+#define PPU_VRAM_ADDR2  (*((uint8_t*)0x2006))	/* this PPU ADR, can be use to set the cursor , x/y offset              */
+#define PPU_VRAM_DATA   (*((uint8_t*)0x2007))	/* this PPU IO, can be used to write to the last addr puted in  PPU ADR */
 
 
 
 extern void waitvblank(void);
-
 typedef unsigned char uint8_t;
-
-static const uint8_t x[3] = { 'A', 'B', 'C' };
-
+const unsigned char *str = "ABC";
 
 
 void foo(void)
@@ -37,6 +32,7 @@ void foo(void)
 	/* each row in the screen, is 32 bytes */
 	/* so the Y must be multiplied by 32 */
 	/* starting of 0x20 of course */
+	
 
 	PPU_VRAM_ADDR2 = 0x20 + (y >> 3); /* here, we take only the bit 7 of y and add to 0x20 */
 	/* but y is only 1: 0x01 , so 0x20 stays 0x20  */
@@ -65,9 +61,9 @@ void foo(void)
 
 	/* ok now we can write  */
 
-	PPU_VRAM_DATA = 'A';
-	/* PPU_VRAM_DATA = x[1]; */
-	/* PPU_VRAM_DATA = x[2]; */
+	PPU_VRAM_DATA = str[0];
+	PPU_VRAM_DATA = str[1];
+	PPU_VRAM_DATA = str[2];
 
 
 }

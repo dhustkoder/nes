@@ -2,6 +2,7 @@
 *.txt.user*
 build/
 cc65/
+examples/
 
 output/
 *.swp

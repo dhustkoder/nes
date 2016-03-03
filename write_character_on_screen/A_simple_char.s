@@ -12,15 +12,19 @@
 	.macpack	longbranch
 	.forceimport	__STARTUP__
 	.import		_waitvblank
+	.export		_str
 	.export		_foo
 	.export		_main
 
+.segment	"DATA"
+
+_str:
+	.addr	L0001
+
 .segment	"RODATA"
 
-_x:
-	.byte	$41
-	.byte	$42
-	.byte	$43
+L0001:
+	.byte	$41,$42,$43,$00
 
 ; ---------------------------------------------------------------
 ; void __near__ foo (void)
@@ -46,7 +50,26 @@ _x:
 	sta     $2005
 	lda     #$01
 	sta     $2007
-	lda     #$41
+	lda     _str
+	sta     ptr1
+	lda     _str+1
+	sta     ptr1+1
+	ldy     #$00
+	lda     (ptr1),y
+	sta     $2007
+	lda     _str
+	sta     ptr1
+	lda     _str+1
+	sta     ptr1+1
+	iny
+	lda     (ptr1),y
+	sta     $2007
+	lda     _str
+	sta     ptr1
+	lda     _str+1
+	sta     ptr1+1
+	iny
+	lda     (ptr1),y
 	sta     $2007
 	rts
 
@@ -76,7 +99,7 @@ _x:
 	sta     $2005
 	lda     #$08
 	sta     $2001
-L0042:	jmp     L0042
+L004B:	jmp     L004B
 
 .endproc
 
