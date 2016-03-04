@@ -11,7 +11,7 @@
 
 extern void waitvblank(void);
 typedef unsigned char uint8_t;
-static const unsigned char str[] = { 'A' , 'B', 'C' };
+static const unsigned char str[] = { 'A' , 'B', 'C' }; // using static const  arrays produce better code than const pointers to "ABC"
 
 void foo(void)
 {
@@ -54,22 +54,10 @@ void foo(void)
 	PPU_VRAM_ADDR = 0x21;
 
 
-	//PPU_VRAM_DATA = str[0];
-	//PPU_VRAM_DATA = str[1];
-	//PPU_VRAM_DATA = str[2];
-
-	__asm__("LDY #00");
-	__asm__("LDA %v", str);
-	__asm__("STA ptr1");
-	__asm__("LDA (ptr1), y");
-	__asm__("STA $2007");
-	__asm__("INY");
-	__asm__("LDA (ptr1), y");
-	__asm__("STA $2007");
-	__asm__("INY");
-	__asm__("LDA (ptr1), y");
-	__asm__("STA $2007");
-
+	PPU_VRAM_DATA = str[0];
+	PPU_VRAM_DATA = str[1];
+	PPU_VRAM_DATA = str[2];
+	
 	return;
 }
 

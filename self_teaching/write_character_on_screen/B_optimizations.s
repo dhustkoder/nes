@@ -45,9 +45,12 @@ _str:
 	sta     $2006
 	lda     #$21
 	sta     $2006
-	mov     $2007, _str
-	mov     $2007, _str+1
-	mov     $2007, _str+2
+	lda     _str
+	sta     $2007
+	lda     _str+1
+	sta     $2007
+	lda     _str+2
+	sta     $2007
 	rts
 
 .endproc
@@ -62,7 +65,7 @@ _str:
 
 .segment	"CODE"
 
-	jsr     _waitvblank
+	;jsr     _waitvblank
 	lda     #$3F
 	sta     $2006
 	lda     #$00
@@ -75,7 +78,7 @@ _str:
 	sta     $2005
 	lda     #$08
 	sta     $2001
-L0050:	jmp     L0050
+L0049:	jmp     L0049
 
 .endproc
 
