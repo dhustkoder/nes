@@ -6,6 +6,8 @@ cc65-win32/
 nesasm/
 examples/
 virtualnes/
+virtualnes/virtuanes097e_982/
+virtuanes097e_982/
 
 output/
 *.swp
