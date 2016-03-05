@@ -1,6 +1,6 @@
 .import _waitvblank
 
-.include "../libdev/src/nes.inc" ; macros to help code for nes ;
+.include "../../libdev/src/nes.inc" ; macros to help code for nes ;
 
 
 ; The INES Header is used to let the Emulator know the specifications of the NES Rom that you're trying to load. 
@@ -41,53 +41,124 @@
 ; is used when the BRK command occurs. Often it is used by the programmer for various purposes.
 
 .segment "VECTORS"
-	.word NMI     ; $FFFA
-	.word RESET   ; $FFFC
-	.word IRQ     ; $FFFE
-
-
-.segment "CODE"
-
-RESET:
-   	jsr _main;
-	JMP RESET
-IRQ:
-NMI:
-
+	.word NMI
+	.word RESET
+	.word IRQ
 
 
 
 ; characters to use ;
 .segment "CHARS"
-	.include        "../libdev/src/neschar.inc"
+	.include "../../libdev/src/neschar.inc" ; include just like C's #include 
+
+
+
+.segment "BSS" ; BSS - data to NES's RAM
+	_str_idx: .byte $00
+	_y_pos:   .byte $00
+	_x_pos:   .byte $00
+	_tmp:	  .byte $00
+
+.segment "RODATA" ; constant data ( from ROM )
+	_str: .byte "HELLO WORLD", $00
+
+
+
+
+
+.segment "CODE"
+; initialize BSS ;
+RESET:  
+	LDA 	#$00
+	STA 	_str_idx
+	LDA 	#$01
+	STA 	_y_pos
+	LDA 	#01
+	STA		_x_pos
+
+	JMP 	_main
+IRQ:
+NMI: 
+	RTS
+
+
+
+
+.segment "CODE"
+	.proc _set_text_color: near
+.segment "CODE"
+	LDA 	#$3F
+	STA 	PPU_VRAM_ADDR
+	LDA 	#$03
+	STA 	PPU_VRAM_ADDR
+	LDA 	#$20
+	STA 	PPU_VRAM_DATA
+	RTS
+.endproc
+
+
+
+
+
+.segment "CODE"
+	.proc _set_cursor_pos: near
+.segment "CODE"
+	; set pos ;
+	LDA 	_y_pos
+	LSR		A
+	LSR		A
+	LSR		A
+	CLC 	; clear carry ;
+	ADC		#$20
+	STA 	PPU_VRAM_ADDR
+	LDA 	_y_pos
+	ASL 	A
+	ASL 	A
+	ASL 	A
+	ASL 	A
+	ASL 	A
+	CLC 	; clear carry ;
+	ADC 	_x_pos
+	STA 	PPU_VRAM_ADDR
+	RTS
+.endproc
+
+
 
 
 
 .segment "CODE"
   .proc _put_char: near
 .segment "CODE"
-	; set text color ;
-	LDA #$3F
-	STA PPU_VRAM_ADDR
-	LDA #$03
-	STA PPU_VRAM_ADDR
-	LDA #$20
-	STA PPU_VRAM_DATA
+	LDY		_str_idx
+	CPY		#11
+	BEQ		RESET_IDX
+LOAD_AND_STORE:
+	LDA 	_str, Y
+	STA 	PPU_VRAM_DATA
+	CLC
+	INC 	_str_idx
+	INC 	_x_pos
 
-	; set cursor position 1,1 ;
-	LDA #$20
-	STA PPU_VRAM_ADDR
-	LDA #$21
-	STA PPU_VRAM_ADDR
+EXIT:	RTS
 
-	; put character 'A' ; 
-	LDA #$41
-	STA PPU_VRAM_DATA
-	rts
 
+RESET_IDX:
+	LDA 	#$00
+	STA 	_str_idx
+	LDA 	#$01
+	STA 	_x_pos
+	JSR 	_set_cursor_pos
+	; clear text ;
+	LDA 	#$00
+	LDY 	#$00
+CLEAR_LOOP:
+	STA 	PPU_VRAM_DATA
+ 	INY
+	CPY 	#11
+	BEQ 	EXIT
+	JMP 	CLEAR_LOOP
 .endproc
-
-
 
 
 
@@ -97,16 +168,16 @@ NMI:
 .segment "CODE"
 	; disable rendering
 	LDA 	#$00	
-	STA	PPU_MASK
+	STA		PPU_MASK
 
 	; set background blue 
-	LDA	#$3F
-	STA	PPU_VRAM_ADDR
-	LDA	#$00
-	STA	PPU_VRAM_ADDR
-	LDA	#$03
-	STA	PPU_VRAM_DATA
-	rts
+	LDA		#$3F
+	STA		PPU_VRAM_ADDR
+	LDA		#$00
+	STA		PPU_VRAM_ADDR
+	LDA		#$03
+	STA		PPU_VRAM_DATA
+	RTS
 .endproc	
 
 
@@ -115,24 +186,27 @@ NMI:
   .proc _enable_rendering: near
 .segment "CODE"
 	; set scroll and set rendering
-	LDA	#$00
-	STA	PPU_VRAM_SCROLL
-	STA	PPU_VRAM_SCROLL
-	LDA	#$08
-	STA	PPU_MASK
-
+	LDA		#$00
+	STA		PPU_VRAM_SCROLL
+	STA		PPU_VRAM_SCROLL
+	LDA		#$08
+	STA		PPU_MASK
+	RTS
 .endproc
 
 
 .segment "CODE"
   .proc _main: near
 .segment "CODE"
+	JSR 	_waitvblank
+	JSR 	_set_background_color
+	JSR 	_set_text_color
 LOOP:
-	jsr _waitvblank
-	jsr _set_background_color
-	jsr _put_char
-	jsr _enable_rendering
-	JMP LOOP
+	JSR 	_set_cursor_pos
+	JSR 	_put_char
+	JSR 	_enable_rendering
+	JSR 	_waitvblank
+	JMP 	LOOP
 
 .endproc
 

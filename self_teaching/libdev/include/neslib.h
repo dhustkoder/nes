@@ -1,11 +1,7 @@
 #ifndef _NESLIB_H_
 #define _NESLIB_H_
-
+#include "nesint.h"
 #include "ppu.h"
-
-/* typedefs */
-typedef unsigned char uint8_t;
-typedef char int8_t;
 
 /* Write a byte to a given address: */
 #define poke(addr, data)        (*((uint8_t*)addr) = data)

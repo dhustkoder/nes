@@ -18,6 +18,9 @@ output/
 *.lo
 *.o
 *.obj
+*.deb
+*.nes
+*.out
 
 # Precompiled Headers
 *.gch

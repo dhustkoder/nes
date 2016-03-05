@@ -74,9 +74,9 @@
 
 struct __ppu
 {
-	uint8_t ctrl;                        /* $2000 */
-	uint8_t mask;                        /* $2001 */
-	signed char volatile const status    /* $2002 */
+	uint8_t ctrl;                         /* $2000 */
+	uint8_t mask;                         /* $2001 */
+	signed char volatile const status;    /* $2002 */
 
 	struct {
 		uint8_t addr;                /* $2003 */
@@ -93,8 +93,7 @@ struct __ppu
 };
 
 #define ppu (*((struct __ppu volatile*)0x2000))
-
-
+#define set_ppu_vram_addr(adr) (( ppu.vram.addr = (adr >> 8)), (ppu.vram.addr = (adr & 0x00ff)) )
 void __fastcall__ waitvblank(void);
 
 
