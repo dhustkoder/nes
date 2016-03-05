@@ -1,4 +1,0 @@
-
-
-all:
-	ca65 -tnes ./src/neslib.hw.s -o ./lib/neslib.o

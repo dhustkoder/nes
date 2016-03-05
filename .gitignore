@@ -2,8 +2,10 @@
 *.txt.user*
 build/
 cc65/
+cc65-win32/
 nesasm/
 examples/
+
 
 output/
 *.swp
