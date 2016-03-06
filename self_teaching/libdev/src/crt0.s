@@ -1,3 +1,7 @@
+.export         __STARTUP__ : absolute = 1      ; Mark as startup
+.import _main
+
+
 
 .segment        "HEADER"
 
@@ -39,3 +43,18 @@
 
 .segment "CHARS"
 	.include        "neschar.inc"
+
+
+.segment "VECTORS"
+	.word NMI
+	.word RESET
+	.word IRQ
+
+
+
+
+.segment "STARTUP"
+RESET:  JMP _main
+NMI:
+IRQ:
+        rts
