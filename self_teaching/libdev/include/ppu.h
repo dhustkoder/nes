@@ -98,16 +98,41 @@ struct __ppu
 
 extern void __fastcall__ waitvblank(void);
 extern void __fastcall__ ppu_set_scroll_enable_render(uint16_t xy); /* x -> A REGISTER,  y -> X RESGISTER */
+
 extern void __fastcall__ write_str(uint8_t* str);                   /* str's characters address: 
                                                                      * low byte -> A REGISTER
                                                                      * high byte -> X REGISTER 
                                                                      */
 
 
-extern void __fastcall__ _ppu_set_cursor_exact(uint16_t xy);         /* lowbyte -> A register, high byte -> X register 
-                                                                      * stores these bytes to the PPU.vram.addr        */
 
-extern void __fastcall__ _ppu_set_cursor_calc(uint8_t x, uint8_t y); /* */
+/* Calculates x/y position. The top-left corner is 0x2000, and each row
+ * is 32 bytes wide. Hence:
+ *  (0,0)   => 0x2000;
+ *  (1,2)   => 0x2000 + 2*32 + 1 => 0x2041;
+ *  (20,16) => 0x2000 + 16*32 + 20 => 0x2214;
+ */
+
+extern void __fastcall__ _ppu_set_cursor_exact(uint16_t xy); /* lowbyte -> A register, high byte -> X register 
+                                                              * stores these bytes to the PPU.vram.addr        
+                                                              */
+
+extern void __fastcall__ _ppu_set_cursor_calc(uint16_t xy);  /* calculate the screen spot based on x, y
+                                                              * x -> X register
+                                                              * y -> A register
+                                                              */
+
+
+
+/* macros for functions, used to optimize the function call or make it easier to use */
+
+#define ppu_set_cursor_exact(x, y) { _ppu_set_cursor_exact((0x2000|((y)<<5)|x)); }
+
+
+#define ppu_set_cursor_calc(x, y)  { __asm__("LDX %v", x); __asm__("LDA %v", y); \
+                                     __asm__("jsr %v", _ppu_set_cursor_calc); }
+
+
 
 
 
@@ -155,35 +180,39 @@ extern void __fastcall__ _ppu_set_cursor_calc(uint8_t x, uint8_t y); /* */
 
 
 
-#define _ppu_2(byte1, byte2) ( (PPU.vram.addr = byte1, PPU.vram.addr = byte2) )
 
-/* Calculates x/y position. The top-left corner is 0x2000, and each row
- * is 32 bytes wide. Hence:
- *  (0,0)   => 0x2000;
- *  (1,2)   => 0x2000 + 2*32 + 1 => 0x2041;
- *  (20,16) => 0x2000 + 16*32 + 20 => 0x2214;
- */
-#define ppu_set_cursor_cpltime(x, y)    { _ppu_set_cursor_exact((0x2000|((y)<<5)|x)); }
-#define ppu_set_cursor_runtime(x, y)    { __asm__("LDX %v", x); __asm__("LDA %v", y); __asm__("jsr __ppu_set_cursor_calc"); }
+
+
+
+
+
+
+
+
+#define PPU_SET_VRAM_ADDR(byte1, byte2) ( (PPU.vram.addr = byte1, PPU.vram.addr = byte2) )
+
+
+
+
 /* Set the screen scroll offsets: */
 
-#define ppu_set_scroll(x, y) { _ppu_2(x, y); }
+#define PPU_SET_SCROLL(x, y) { PPU_SET_VRAM_ADDR(x, y); }
 
 
 /* Set "foreground colour"...
  * i.e. write color 'c' value into VRAM address 0x3F03
  * ...which is colour no. 3 in "background palette 0".
  * See: http://wiki.nesdev.com/w/index.php/PPU_palettes */
-#define ppu_set_color_text(c)   { _ppu_2(0x3F, 0x03); ppu_io(c); }
+#define PPU_SET_COLOR_TEXT(c)   { PPU_SET_VRAM_ADDR(0x3F, 0x03); PPU_IO(c); }
 
 /* Set "background colour"...
  * i.e. write color 'c' value into VRAM address 0x3F00
  * ...which is the "Universal background color" palette entry.
  * See: http://wiki.nesdev.com/w/index.php/PPU_palettes */
-#define ppu_set_color_back(c)   { _ppu_2(0x3F, 0x00); ppu_io(c); }
+#define PPU_SET_COLOR_BACK(c)   { PPU_SET_VRAM_ADDR(0x3F, 0x00); PPU_IO(c); }
 
 /* Write to the PPU IO port, e.g. to write a byte at the nametable 'cursor' position: */
-#define ppu_io(c)               { PPU.vram.data = c; }
+#define PPU_IO(c)               { PPU.vram.data = c; }
 
 
 

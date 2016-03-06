@@ -54,7 +54,9 @@
 
 .segment "STARTUP"
 
-RESET:  JMP _main ; jump main
+RESET:  
+        CLD       ; disable decimal mode
+        JMP _main ; jump main
 
 
 NMI:
