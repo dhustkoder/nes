@@ -1,5 +1,5 @@
 .export         __STARTUP__ : absolute = 1      ; Mark as startup
-
+.import _main
 
 
 .segment        "HEADER"
@@ -39,18 +39,20 @@
         .byte   0,0,0,0,0,0,0,0 ; 8 zeroes
 
 
-
-.segment "CHARS"
-	.include        "neschar.inc"
-
-
 .segment "VECTORS"
 	.word NMI
 	.word RESET
 	.word IRQ
 
 
-.import _main
+
+.segment "CHARS"
+	.include        "neschar.inc"
+
+
+
+
+
 
 .segment "STARTUP"
 
