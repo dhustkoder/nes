@@ -1,19 +1,12 @@
 .include "inc/nes.inc"
 
 
-; exports joypads.h ;
-.export _joypads
+.importzp _joypads   ; import _joypads from zeropage
+
 .export _update_pad1
 .export _update_pad1
-
-
-.segment "BSS"
-	_joypads: .res 2     ; extern uint8_t joypads[2]  ;
+  
                         
-                        
-
-
-
 .segment 	"CODE"
 
 prepare_pads_for_read:

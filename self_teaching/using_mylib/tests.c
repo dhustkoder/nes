@@ -1,16 +1,14 @@
 #include "../libdev/include/neslib.h"
 
-static const uint8_t* const arr = "HELLO MY LIB!";
 static const uint8_t* const words[] = 
 {
 	"KEY ", " PRESSED", "A", "B", "SELECT", 
-	"START", "UP", "DOWN", "LEFT", "RIGHT",
-	"                  "
+	"START", "UP", "DOWN", "LEFT", "RIGHT"
 };
 
 enum Words
 {
-	WA = 2, WB, WSelect, WStart, 
+	WKey, WPressed, WA, WB, WSelect, WStart, 
 	WUp, WDown, WLeft, WRight, WErase
 };
 
@@ -21,23 +19,24 @@ void main(void)
 	PPU_SET_COLOR_BACK(BLUE);
 	PPU_SET_COLOR_TEXT(WHITE);
 	ppu_set_cursor_exact(1,1);
-	write_str(arr);
+	write_str("**HELLO CNESLIB!**");
 	
 	ppu_set_scroll_enable_render(0x0000);
 
 	while(true)
 	{
 		/* hold until start is pressed */
-		while(joypads[0] == 0)
+		update_pad1();
+		while(JOYPAD1 == KEY_NULL)
 			update_pad1();
 
 		waitvblank();
 		ppu_set_cursor_exact(1,2);
-		ppu_write_rval('\0', 18); /* erase */
+		ppu_write_rval('\0', 22);  /* erase */
 		ppu_set_cursor_exact(1,2);
-		write_str(words[0]); /* write KEY */
+		write_str(words[WKey]);    /* write KEY */
 		
-		switch(joypads[0])
+		switch(JOYPAD1)
 		{
 			case KEY_A:      write_str(words[WA]);      break;
 			case KEY_B:      write_str(words[WB]);      break;
@@ -47,10 +46,11 @@ void main(void)
 			case KEY_DOWN:   write_str(words[WDown]);   break;
 			case KEY_LEFT:   write_str(words[WLeft]);   break;
 			case KEY_RIGHT:  write_str(words[WRight]);  break;
+			default:         write_str("UNDEFINED");    break;
 		}
 		
-		write_str(words[1]); /* write PRESSED */
+		write_str(words[WPressed]); /* write PRESSED */
 		ppu_set_scroll_enable_render(0x0000);
-		update_pad1();
+		
 	}
 }

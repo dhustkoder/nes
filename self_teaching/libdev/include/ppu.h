@@ -141,10 +141,10 @@ extern void __fastcall__ _ppu_set_cursor_calc(uint16_t xy);  /* calculate the sc
 #define ppu_write_lval(value, times) { __asm__("LDA %v", value); __asm__("LDX %v", times); \
                                        __asm__("JSR %v", _write_val); }
 /* value is rvalue , times is lvalue */
-#define ppu_write_rvall(value, times) { __asm__("LDA #%b", value); __asm__("LDX %v", times); \
+#define ppu_write_rlval(value, times) { __asm__("LDA #%b", value); __asm__("LDX %v", times); \
                                         __asm__("JSR %v", _write_val); }
 /*value is lvalue, times is rvalue */
-#define ppu_write_lvalr(value, times) { __asm__("LDA %v", value); __asm__("LDX #%b", times); \
+#define ppu_write_lrval(value, times) { __asm__("LDA %v", value); __asm__("LDX #%b", times); \
                                         __asm__("JSR %v", _write_val); }
 
 

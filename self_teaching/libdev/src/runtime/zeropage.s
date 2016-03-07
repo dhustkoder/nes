@@ -15,6 +15,7 @@ tmp1:           .res    1
 tmp2:           .res    1
 tmp3:           .res    1
 tmp4:           .res    1
-_u8_arg:        .res 	1
-_u16_arg:       .res    2 
+_joypads:       .res    2       ; NES joypads states -> extern uint8_t joypads[2]
+_u8_arg:        .res 	1       ; u8 arg temp for c code
+_u16_arg:       .res    2       ; u16 arg temp for c code
 regbank:        .res    regbanksize     ; Register bank
