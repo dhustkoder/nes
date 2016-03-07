@@ -40,14 +40,14 @@ void main(void)
 		
 		switch(joypads[0])
 		{
-			case KEY_A:	        write_str(words[WA]);      break;
-			case KEY_B:	        write_str(words[WB]);      break;
-			case KEY_SELECT:	write_str(words[WSelect]); break;
-			case KEY_START:	    write_str(words[WStart]);  break;
-			case KEY_UP:	    write_str(words[WUp]);     break;
-			case KEY_DOWN:	    write_str(words[WDown]);   break;
-			case KEY_LEFT:	    write_str(words[WLeft]);   break;
-			case KEY_RIGHT:	    write_str(words[WRight]);  break;
+			case KEY_A:      write_str(words[WA]);      break;
+			case KEY_B:      write_str(words[WB]);      break;
+			case KEY_SELECT: write_str(words[WSelect]); break;
+			case KEY_START:	 write_str(words[WStart]);  break;
+			case KEY_UP:     write_str(words[WUp]);     break;
+			case KEY_DOWN:   write_str(words[WDown]);   break;
+			case KEY_LEFT:   write_str(words[WLeft]);   break;
+			case KEY_RIGHT:  write_str(words[WRight]);  break;
 		}
 		
 		write_str(words[1]); /* write PRESSED */
