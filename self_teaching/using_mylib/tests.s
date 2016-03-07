@@ -14,13 +14,36 @@
 	.import		_waitvblank
 	.import		_ppu_set_scroll_enable_render
 	.import		_write_str
-	.import		__ppu_set_cursor_exact
+	.export		_put_string
 	.export		_main
+
+.segment	"DATA"
+
+_x:
+	.byte	$01
+_y:
+	.byte	$01
 
 .segment	"RODATA"
 
-L0025:
+L0003:
 	.byte	$48,$45,$4C,$4C,$4F,$20,$4D,$59,$4C,$49,$42,$21,$00
+
+; ---------------------------------------------------------------
+; void __near__ put_string (void)
+; ---------------------------------------------------------------
+
+.segment	"CODE"
+
+.proc	_put_string: near
+
+.segment	"CODE"
+
+	lda     #<(L0003)
+	ldx     #>(L0003)
+	jmp     _write_str
+
+.endproc
 
 ; ---------------------------------------------------------------
 ; void __near__ main (void)
@@ -45,16 +68,13 @@ L0025:
 	sta     $2006
 	lda     #$20
 	sta     $2007
-	tax
-	lda     #$21
-	jsr     __ppu_set_cursor_exact
-	lda     #<(L0025)
-	ldx     #>(L0025)
-	jsr     _write_str
+	lda     _y
+	jsr     __ppu_set_cursor_calc
+	jsr     _put_string
 	ldx     #$00
-	txa
+	lda     #$FF
 	jsr     _ppu_set_scroll_enable_render
-L002D:	jmp     L002D
+L0032:	jmp     L0032
 
 .endproc
 

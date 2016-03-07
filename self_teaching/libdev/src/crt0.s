@@ -1,5 +1,4 @@
 .export         __STARTUP__ : absolute = 1      ; Mark as startup
-.import _main
 
 
 
@@ -51,10 +50,15 @@
 	.word IRQ
 
 
-
+.import _main
 
 .segment "STARTUP"
-RESET:  JMP _main
+
+RESET:  JMP _main ; jump main
+
+
 NMI:
+
+
 IRQ:
         rts

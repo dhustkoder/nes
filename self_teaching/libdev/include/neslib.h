@@ -5,6 +5,7 @@
 #include "ppu.h"
 
 #define poke (addr, data) ((*(uint8_t*)addr) = data)
+
 /* Write to APU_STATUS register: */
 #define apu_status(c)           poke(APU_STATUS, (c))
 
@@ -15,8 +16,7 @@
 
 
 
-/* static assert */
-#define static_assert(x) const static_assert_arr[x ? -1 : 1];
+
 
 
 

@@ -17,7 +17,7 @@
 
 
 
-/* PPUMASK $2001   
+/* PPU_MASK $2001   
 * BITS: BGRs bMmG 
 * color emphasis (BGR), 
 * sprite enable (s), 
@@ -30,7 +30,7 @@
 
 
 
-/* PPUSTATUS $2002   
+/* PPU_STATUS $2002   
 * BITS: VSO- ----   
 * vblank (V), 
 * sprite 0 hit (S), 
@@ -40,34 +40,34 @@
 
 
 
-/* OAMADDR $2003   
+/* OAM_ADDR $2003   
 * BITS: aaaa aaaa   
 * OAM read/write address
 */
 
-/* OAMDATA $2004   
+/* OAM_DATA $2004   
 * BITS: dddd dddd   
 * OAM data read/write
 */
 
-/* PPUSCROLL $2005   
+/* PPUS_CROLL $2005   
 * BITS: xxxx xxxx   
 * fine scroll position (two writes: X, Y)
 */
 
 
-/* PPUADDR  $2006   
+/* PPU_ADDR  $2006   
 * BITS: aaaa aaaa   
 * PPU read/write address (two writes: MSB, LSB)
 */
 
 
-/* PPUDATA  $2007   
+/* PPU_DATA  $2007   
 * BITS: dddd dddd   
 * PPU data read/write
 */
 
-/* OAM DMA $4014
+/* OAM_DMA $4014
 * BITS: aaaa aaaa   
 * OAM DMA high address
 */
@@ -92,16 +92,22 @@ struct __ppu
 	
 };
 
-
 #define PPU (*((struct __ppu volatile*)0x2000))
 
 /* these functions don't take parameters by stack, but by registers */
-void __fastcall__ waitvblank(void);
-void __fastcall__ ppu_set_scroll_enable_render(uint16_t xy); /* X -> A register Y -> X RESGISTER*/
-void __fastcall__ write_str(uint8_t* str);
 
-void __fastcall__ _ppu_set_cursor_exact(uint16_t xy);
-void __fastcall__ _ppu_set_cursor_calc(uint8_t x, uint8_t y);
+extern void __fastcall__ waitvblank(void);
+extern void __fastcall__ ppu_set_scroll_enable_render(uint16_t xy); /* x -> A REGISTER,  y -> X RESGISTER */
+extern void __fastcall__ write_str(uint8_t* str);                   /* str's characters address: 
+                                                                     * low byte -> A REGISTER
+                                                                     * high byte -> X REGISTER 
+                                                                     */
+
+
+extern void __fastcall__ _ppu_set_cursor_exact(uint16_t xy);         /* lowbyte -> A register, high byte -> X register 
+                                                                      * stores these bytes to the PPU.vram.addr        */
+
+extern void __fastcall__ _ppu_set_cursor_calc(uint8_t x, uint8_t y); /* */
 
 
 
@@ -158,7 +164,7 @@ void __fastcall__ _ppu_set_cursor_calc(uint8_t x, uint8_t y);
  *  (20,16) => 0x2000 + 16*32 + 20 => 0x2214;
  */
 #define ppu_set_cursor_cpltime(x, y)    { _ppu_set_cursor_exact((0x2000|((y)<<5)|x)); }
-#define ppu_set_cursor_runtime(x, y)    { _ppu_set_cursor_calc(x, y); }
+#define ppu_set_cursor_runtime(x, y)    { __asm__("LDX %v", x); __asm__("LDA %v", y); __asm__("jsr __ppu_set_cursor_calc"); }
 /* Set the screen scroll offsets: */
 
 #define ppu_set_scroll(x, y) { _ppu_2(x, y); }
