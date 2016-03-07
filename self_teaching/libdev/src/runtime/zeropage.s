@@ -15,4 +15,6 @@ tmp1:           .res    1
 tmp2:           .res    1
 tmp3:           .res    1
 tmp4:           .res    1
+_u8_arg:        .res 	1
+_u16_arg:       .res    2 
 regbank:        .res    regbanksize     ; Register bank

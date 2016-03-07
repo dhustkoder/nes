@@ -1,5 +1,12 @@
 .export         __STARTUP__ : absolute = 1      ; Mark as startup
-.import _main
+
+.import         __RAM_START__, __RAM_SIZE__     ; linker generated
+.import         __SRAM_START__, __SRAM_SIZE__     ; linker generated
+.import         _main
+
+
+.include        "inc/zeropage.inc"
+.include        "inc/nes.inc"
 
 
 .segment        "HEADER"
@@ -39,26 +46,30 @@
         .byte   0,0,0,0,0,0,0,0 ; 8 zeroes
 
 
-.segment "VECTORS"
+.segment        "VECTORS"
 	.word NMI
 	.word RESET
 	.word IRQ
 
 
 
-.segment "CHARS"
-	.include        "inc/neschar.inc"
+.segment        "CHARS"
+	.include       "inc/neschar.inc"
 
 
 
 
 
 
-.segment "STARTUP"
+.segment        "STARTUP"
 
 RESET:  
-        CLD       ; disable decimal mode
-        JMP _main ; jump main
+        CLD                                          ; disable decimal mode
+        lda     #<(__SRAM_START__ + __SRAM_SIZE__)
+        sta     sp
+        lda     #>(__SRAM_START__ + __SRAM_SIZE__)
+        sta     sp+1                                 ; Set argument stack ptr
+        JMP     _main                                ; jump main
 
 
 NMI:
