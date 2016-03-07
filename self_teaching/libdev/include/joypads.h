@@ -13,13 +13,12 @@
 
 
 extern uint8_t joypads[2];
-extern bool __fastcall__ update_pad1(void);
-extern bool __fastcall__ update_pad2(void);
+extern void __fastcall__ update_pad1(void);
+extern void __fastcall__ update_pad2(void);
 
 
 
-#define IS_KEY_PRESSED(pad, key) (((pad & key) != 0))
-
-
+#define IS_KEY_DOWN(pad, key) (((pad & key) != 0))
+#define IS_KEY_UP(pad, key)   (((pad & key) == 0))
 
 #endif

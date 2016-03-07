@@ -64,12 +64,14 @@
 .segment        "STARTUP"
 
 RESET:  
-        CLD                                          ; disable decimal mode
+        CLD     ; disable decimal mode
+
+                ; set stack pointer ;
         lda     #<(__SRAM_START__ + __SRAM_SIZE__)
         sta     sp
         lda     #>(__SRAM_START__ + __SRAM_SIZE__)
-        sta     sp+1                                 ; Set argument stack ptr
-        JMP     _main                                ; jump main
+        sta     sp+1
+        JMP     _main    ; jump main
 
 
 NMI:

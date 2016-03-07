@@ -15,8 +15,8 @@ typedef unsigned int        uint16_t;
 #define INT16_MIN           ((int16_t) 0x8000)
 #define INT16_MAX           ((int16_t) 0x7FFF)
 
-#define MAX(x, y)           ( x > y ? x : y)
-#define MIN(x, y)           ( x < y ? y : x)
+#define MAX(x, y)           ( x > y ? x : y )
+#define MIN(x, y)           ( x < y ? y : x )
 
 
 /* boolean */

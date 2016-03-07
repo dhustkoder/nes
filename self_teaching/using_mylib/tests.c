@@ -15,7 +15,6 @@ enum Words
 };
 
 
-
 void main(void)
 {
 	waitvblank();
@@ -34,7 +33,7 @@ void main(void)
 
 		waitvblank();
 		ppu_set_cursor_exact(1,2);
-		write_str(words[WErase]); /* erase */
+		ppu_write_rval('\0', 18); /* erase */
 		ppu_set_cursor_exact(1,2);
 		write_str(words[0]); /* write KEY */
 		

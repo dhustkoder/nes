@@ -74,20 +74,20 @@
 
 struct __ppu
 {
-	uint8_t ctrl; 						/* $2000 */
+	uint8_t ctrl;                       /* $2000 */
 	uint8_t mask;                       /* $2001 */
 	signed char volatile const status;  /* $2002 */
 
 	struct {
-		uint8_t addr; 					/* $2003 */
-		uint8_t data; 					/* $2004 */
+		uint8_t addr;                   /* $2003 */
+		uint8_t data;                   /* $2004 */
 	} sprite;
     
 
 	struct {
-		uint8_t scroll; 				/* $2005 */
-		uint8_t addr;					/* $2006 */
-		uint8_t data;					/* $2007 */
+		uint8_t scroll;                 /* $2005 */
+		uint8_t addr;                   /* $2006 */
+		uint8_t data;                   /* $2007 */
 	} vram;
 	
 };
@@ -95,14 +95,23 @@ struct __ppu
 #define PPU (*((struct __ppu volatile*)0x2000))
 
 /* these functions don't take parameters by stack, but by registers */
-
 extern void __fastcall__ waitvblank(void);
-extern void __fastcall__ ppu_set_scroll_enable_render(const uint16_t xy); /* x -> A REGISTER,  y -> X RESGISTER */
 
-extern void __fastcall__ write_str(const uint8_t* str);  /* str's characters address: 
-                                                          * low byte -> A REGISTER
-                                                          * high byte -> X REGISTER 
-                                                          */
+
+/* x -> A REGISTER,  y -> X RESGISTER */
+extern void __fastcall__ ppu_set_scroll_enable_render(const uint16_t xy); 
+
+
+/* str's characters address: 
+ * low byte -> A REGISTER
+ * high byte -> X REGISTER */
+extern void __fastcall__ write_str(const uint8_t* const str);  
+
+/* _write_val: write a value (stored on register A) in 
+ * PPU.vram.data, decrementing X until 0, then return.
+ * must be used with ppu_write_rval and ppu_write_lval macros */
+extern void __fastcall__ _write_val(const uint16_t val_and_times);
+
 
 
 
@@ -112,7 +121,6 @@ extern void __fastcall__ write_str(const uint8_t* str);  /* str's characters add
  *  (1,2)   => 0x2000 + 2*32 + 1 => 0x2041;
  *  (20,16) => 0x2000 + 16*32 + 20 => 0x2214;
  */
-
 extern void __fastcall__ _ppu_set_cursor_exact(uint16_t xy); /* lowbyte -> A register, high byte -> X register 
                                                               * stores these bytes to the PPU.vram.addr        
                                                               */
@@ -126,11 +134,24 @@ extern void __fastcall__ _ppu_set_cursor_calc(uint16_t xy);  /* calculate the sc
 
 /* macros for functions, used to optimize the function call or make it easier to use */
 
+/* value and times are rvalues */
+#define ppu_write_rval(value, times) { __asm__("LDA #%b", value); __asm__("LDX #%b", times); \
+                                       __asm__("JSR %v", _write_val); }
+/* value and times are lvalues */
+#define ppu_write_lval(value, times) { __asm__("LDA %v", value); __asm__("LDX %v", times); \
+                                       __asm__("JSR %v", _write_val); }
+/* value is rvalue , times is lvalue */
+#define ppu_write_rvall(value, times) { __asm__("LDA #%b", value); __asm__("LDX %v", times); \
+                                        __asm__("JSR %v", _write_val); }
+/*value is lvalue, times is rvalue */
+#define ppu_write_lvalr(value, times) { __asm__("LDA %v", value); __asm__("LDX #%b", times); \
+                                        __asm__("JSR %v", _write_val); }
+
+
 #define ppu_set_cursor_exact(x, y) { _ppu_set_cursor_exact((0x2000|((y)<<5)|x)); }
 
-
 #define ppu_set_cursor_calc(x, y)  { __asm__("LDX %v", x); __asm__("LDA %v", y); \
-                                     __asm__("jsr %v", _ppu_set_cursor_calc); }
+                                     __asm__("JSR %v", _ppu_set_cursor_calc); }
 
 
 
@@ -181,17 +202,7 @@ extern void __fastcall__ _ppu_set_cursor_calc(uint16_t xy);  /* calculate the sc
 
 
 
-
-
-
-
-
-
-
-
 #define PPU_SET_VRAM_ADDR(byte1, byte2) ( (PPU.vram.addr = byte1, PPU.vram.addr = byte2) )
-
-
 
 
 /* Set the screen scroll offsets: */
@@ -213,11 +224,6 @@ extern void __fastcall__ _ppu_set_cursor_calc(uint16_t xy);  /* calculate the sc
 
 /* Write to the PPU IO port, e.g. to write a byte at the nametable 'cursor' position: */
 #define PPU_IO(c)               { PPU.vram.data = c; }
-
-
-
-
-
 
 
 

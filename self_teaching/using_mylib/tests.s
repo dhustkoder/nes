@@ -14,6 +14,7 @@
 	.import		_waitvblank
 	.import		_ppu_set_scroll_enable_render
 	.import		_write_str
+	.import		__write_val
 	.import		__ppu_set_cursor_exact
 	.import		_joypads
 	.import		_update_pad1
@@ -101,9 +102,9 @@ L004B:	lda     _joypads
 	ldx     #$20
 	lda     #$41
 	jsr     __ppu_set_cursor_exact
-	lda     _words+20
-	ldx     _words+20+1
-	jsr     _write_str
+	lda     #$00
+	ldx     #$12
+	jsr     __write_val
 	ldx     #$20
 	lda     #$41
 	jsr     __ppu_set_cursor_exact
@@ -112,47 +113,47 @@ L004B:	lda     _joypads
 	jsr     _write_str
 	lda     _joypads
 	cmp     #$01
-	beq     L0065
-	cmp     #$02
 	beq     L006A
-	cmp     #$04
+	cmp     #$02
 	beq     L006F
-	cmp     #$08
+	cmp     #$04
 	beq     L0074
-	cmp     #$10
+	cmp     #$08
 	beq     L0079
-	cmp     #$20
+	cmp     #$10
 	beq     L007E
-	cmp     #$40
+	cmp     #$20
 	beq     L0083
-	cmp     #$80
+	cmp     #$40
 	beq     L0088
-	jmp     L0063
-L0065:	lda     _words+4
+	cmp     #$80
+	beq     L008D
+	jmp     L0068
+L006A:	lda     _words+4
 	ldx     _words+4+1
-	jmp     L0092
-L006A:	lda     _words+6
+	jmp     L0097
+L006F:	lda     _words+6
 	ldx     _words+6+1
-	jmp     L0092
-L006F:	lda     _words+8
+	jmp     L0097
+L0074:	lda     _words+8
 	ldx     _words+8+1
-	jmp     L0092
-L0074:	lda     _words+10
+	jmp     L0097
+L0079:	lda     _words+10
 	ldx     _words+10+1
-	jmp     L0092
-L0079:	lda     _words+12
+	jmp     L0097
+L007E:	lda     _words+12
 	ldx     _words+12+1
-	jmp     L0092
-L007E:	lda     _words+14
+	jmp     L0097
+L0083:	lda     _words+14
 	ldx     _words+14+1
-	jmp     L0092
-L0083:	lda     _words+16
+	jmp     L0097
+L0088:	lda     _words+16
 	ldx     _words+16+1
-	jmp     L0092
-L0088:	lda     _words+18
+	jmp     L0097
+L008D:	lda     _words+18
 	ldx     _words+18+1
-L0092:	jsr     _write_str
-L0063:	lda     _words+2
+L0097:	jsr     _write_str
+L0068:	lda     _words+2
 	ldx     _words+2+1
 	jsr     _write_str
 	ldx     #$00

@@ -5,7 +5,9 @@
 .export _ppu_set_scroll_enable_render
 .export _write_str
 
+
 ; functions that are called from C code with macros ;
+.export __write_val
 .export __ppu_set_cursor_exact
 .export __ppu_set_cursor_calc
 
@@ -67,6 +69,15 @@ EXIT:
 .endproc
 
 
+
+.proc __write_val
+WRITE_VAL:
+	STA 	PPU_VRAM_DATA      ; write value to the ppu
+	DEX                        ; decrement X
+	BNE 	WRITE_VAL          ; if X != 0 write again
+	RTS                        ; else return
+
+.endproc
 
 
 ;-----------------------------------------------------------------------------------;
