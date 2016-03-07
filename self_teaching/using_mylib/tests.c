@@ -13,6 +13,7 @@ enum Words
 };
 
 
+
 void main(void)
 {
 	waitvblank();

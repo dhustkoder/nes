@@ -22,9 +22,8 @@
 
 .segment	"RODATA"
 
-_alreadyPrinted:
-	.byte	$00
 _words:
+	.addr	L0005
 	.addr	L0007
 	.addr	L0009
 	.addr	L000B
@@ -34,31 +33,30 @@ _words:
 	.addr	L0013
 	.addr	L0015
 	.addr	L0017
-	.addr	L0019
-L003F:
+L003D:
 	.byte	$2A,$2A,$48,$45,$4C,$4C,$4F,$20,$43,$4E,$45,$53,$4C,$49,$42,$21
 	.byte	$2A,$2A,$00
-L0095:
+L0093:
 	.byte	$55,$4E,$44,$45,$46,$49,$4E,$45,$44,$00
-L0009:
-	.byte	$20,$50,$52,$45,$53,$53,$45,$44,$00
-L000F:
-	.byte	$53,$45,$4C,$45,$43,$54,$00
-L0011:
-	.byte	$53,$54,$41,$52,$54,$00
-L0019:
-	.byte	$52,$49,$47,$48,$54,$00
-L0015:
-	.byte	$44,$4F,$57,$4E,$00
-L0017:
-	.byte	$4C,$45,$46,$54,$00
 L0007:
-	.byte	$4B,$45,$59,$20,$00
-L0013:
-	.byte	$55,$50,$00
-L000B:
-	.byte	$41,$00
+	.byte	$20,$50,$52,$45,$53,$53,$45,$44,$00
 L000D:
+	.byte	$53,$45,$4C,$45,$43,$54,$00
+L000F:
+	.byte	$53,$54,$41,$52,$54,$00
+L0017:
+	.byte	$52,$49,$47,$48,$54,$00
+L0013:
+	.byte	$44,$4F,$57,$4E,$00
+L0015:
+	.byte	$4C,$45,$46,$54,$00
+L0005:
+	.byte	$4B,$45,$59,$20,$00
+L0011:
+	.byte	$55,$50,$00
+L0009:
+	.byte	$41,$00
+L000B:
 	.byte	$42,$00
 
 ; ---------------------------------------------------------------
@@ -71,170 +69,92 @@ L000D:
 
 .segment	"CODE"
 
-;
-; waitvblank();
-;
 	jsr     _waitvblank
-;
-; PPU_SET_COLOR_BACK(BLUE);
-;
 	lda     #$3F
 	sta     $2006
 	lda     #$00
 	sta     $2006
 	lda     #$01
 	sta     $2007
-;
-; PPU_SET_COLOR_TEXT(WHITE);
-;
 	lda     #$3F
 	sta     $2006
 	lda     #$03
 	sta     $2006
 	lda     #$20
 	sta     $2007
-;
-; ppu_set_cursor_exact(1,1);
-;
 	tax
 	lda     #$21
 	jsr     __ppu_set_cursor_exact
-;
-; write_str("**HELLO CNESLIB!**");
-;
-	lda     #<(L003F)
-	ldx     #>(L003F)
-L00A0:	jsr     _write_str
-;
-; ppu_set_scroll_enable_render(0x0000);
-;
+	lda     #<(L003D)
+	ldx     #>(L003D)
+L009E:	jsr     _write_str
 	ldx     #$00
 	txa
 	jsr     _ppu_set_scroll_enable_render
-;
-; update_pad1();
-;
-L0049:	jsr     _update_pad1
-;
-; while(JOYPAD1 == KEY_NULL)
-;
+L0047:	jsr     _update_pad1
 	lda     _joypads
-	beq     L0049
-;
-; waitvblank();
-;
+	beq     L0047
 	jsr     _waitvblank
-;
-; ppu_set_cursor_exact(1,2);
-;
 	ldx     #$20
 	lda     #$41
 	jsr     __ppu_set_cursor_exact
-;
-; ppu_write_rval('\0', 22);  /* erase */
-;
 	lda     #$00
 	ldx     #$16
 	jsr     __write_val
-;
-; ppu_set_cursor_exact(1,2);
-;
 	ldx     #$20
 	lda     #$41
 	jsr     __ppu_set_cursor_exact
-;
-; write_str(words[WKey]);    /* write KEY */
-;
 	lda     _words
 	ldx     _words+1
 	jsr     _write_str
-;
-; switch(JOYPAD1)
-;
 	lda     _joypads
-;
-; }
-;
 	cmp     #$01
-	beq     L006C
+	beq     L006A
 	cmp     #$02
-	beq     L0071
+	beq     L006F
 	cmp     #$04
-	beq     L0076
+	beq     L0074
 	cmp     #$08
-	beq     L007B
+	beq     L0079
 	cmp     #$10
-	beq     L0080
+	beq     L007E
 	cmp     #$20
-	beq     L0085
+	beq     L0083
 	cmp     #$40
-	beq     L008A
+	beq     L0088
 	cmp     #$80
-	beq     L008F
-	jmp     L0093
-;
-; case KEY_A:      write_str(words[WA]);      break;
-;
-L006C:	lda     _words+4
+	beq     L008D
+	jmp     L0091
+L006A:	lda     _words+4
 	ldx     _words+4+1
-	jmp     L009C
-;
-; case KEY_B:      write_str(words[WB]);      break;
-;
-L0071:	lda     _words+6
+	jmp     L009A
+L006F:	lda     _words+6
 	ldx     _words+6+1
-	jmp     L009C
-;
-; case KEY_SELECT: write_str(words[WSelect]); break;
-;
-L0076:	lda     _words+8
+	jmp     L009A
+L0074:	lda     _words+8
 	ldx     _words+8+1
-	jmp     L009C
-;
-; case KEY_START:  write_str(words[WStart]);  break;
-;
-L007B:	lda     _words+10
+	jmp     L009A
+L0079:	lda     _words+10
 	ldx     _words+10+1
-	jmp     L009C
-;
-; case KEY_UP:     write_str(words[WUp]);     break;
-;
-L0080:	lda     _words+12
+	jmp     L009A
+L007E:	lda     _words+12
 	ldx     _words+12+1
-	jmp     L009C
-;
-; case KEY_DOWN:   write_str(words[WDown]);   break;
-;
-L0085:	lda     _words+14
+	jmp     L009A
+L0083:	lda     _words+14
 	ldx     _words+14+1
-	jmp     L009C
-;
-; case KEY_LEFT:   write_str(words[WLeft]);   break;
-;
-L008A:	lda     _words+16
+	jmp     L009A
+L0088:	lda     _words+16
 	ldx     _words+16+1
-	jmp     L009C
-;
-; case KEY_RIGHT:  write_str(words[WRight]);  break;
-;
-L008F:	lda     _words+18
+	jmp     L009A
+L008D:	lda     _words+18
 	ldx     _words+18+1
-	jmp     L009C
-;
-; default:         write_str("UNDEFINED");    break;
-;
-L0093:	lda     #<(L0095)
-	ldx     #>(L0095)
-L009C:	jsr     _write_str
-;
-; write_str(words[WPressed]); /* write PRESSED */
-;
+	jmp     L009A
+L0091:	lda     #<(L0093)
+	ldx     #>(L0093)
+L009A:	jsr     _write_str
 	lda     _words+2
 	ldx     _words+2+1
-;
-; while(true)
-;
-	jmp     L00A0
+	jmp     L009E
 
 .endproc
 
