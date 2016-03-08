@@ -97,12 +97,12 @@ struct __ppu
 /* these functions don't take parameters by stack, but by registers */
 
 extern void __fastcall__ waitvblank(void);
-extern void __fastcall__ ppu_set_scroll_enable_render(uint16_t xy); /* x -> A REGISTER,  y -> X RESGISTER */
+extern void __fastcall__ ppu_set_scroll_enable_render(const uint16_t xy); /* x -> A REGISTER,  y -> X RESGISTER */
 
-extern void __fastcall__ write_str(uint8_t* str);                   /* str's characters address: 
-                                                                     * low byte -> A REGISTER
-                                                                     * high byte -> X REGISTER 
-                                                                     */
+extern void __fastcall__ write_str(const uint8_t* str);  /* str's characters address: 
+                                                          * low byte -> A REGISTER
+                                                          * high byte -> X REGISTER 
+                                                          */
 
 
 

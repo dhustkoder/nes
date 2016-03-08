@@ -1,28 +1,29 @@
 #include "../libdev/include/neslib.h"
 
+static const uint8_t* const arr = "HELLO MY LIB!";
 
-static const unsigned char arr[] = {1, '\0'};
-
-
-void put_string(void) {
-	write_str((uint8_t*)arr);
+bool __fastcall__ test_case(uint8_t x)
+{
+	return x >= 11 ? true : false;
 }
 
 
-
-static unsigned char x = 0;
-static unsigned char y = 0;
-
 void main(void)
 {
-	x = 30;
-	y = 28;
 	waitvblank();
 	PPU_SET_COLOR_BACK(BLUE);
 	PPU_SET_COLOR_TEXT(WHITE);
+	ppu_set_cursor_exact(1,1);
+	write_str(arr);
 	
-	ppu_set_cursor_calc(x, y);
-	put_string();
+	ppu_set_cursor_exact(1,2);
+	
+
+	if(test_case(11))
+		write_str("MORE THAN 10");
+	else
+		write_str("LESS THAN 10");
+
 	ppu_set_scroll_enable_render(0x0000);
 	while(1);
 }

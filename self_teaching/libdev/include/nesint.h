@@ -19,6 +19,12 @@ typedef unsigned int        uint16_t;
 #define MIN(x, y)           ( x < y ? y : x)
 
 
+/* boolean */
+typedef uint8_t bool;
+#define true  1
+#define false 0
+
+
 #endif
 
 

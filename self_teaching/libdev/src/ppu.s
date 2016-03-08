@@ -69,14 +69,17 @@ EXIT:
 
 
 
-;----------------------------------------------------------------------;
-; extern void __fastcall__ _ppu_set_cursor_calc(uint8_t x, uint8_t y)  ;
-;----------------------------------------------------------------------;
-
+;-----------------------------------------------------------------------------------;
+; extern void __fastcall__ _ppu_set_cursor_exact(uint16 xy)                         ;
+;-----------------------------------------------------------------------------------;
+; the compile time calculated x and y positions. msb in X register lsb in A register;
+;-----------------------------------------------------------------------------------;
 .proc __ppu_set_cursor_exact
+
 	STX 	PPU_VRAM_ADDR    ; store the high byte
 	STA 	PPU_VRAM_ADDR    ; store the low byte
 	RTS
+
 .endproc
 
 
@@ -85,9 +88,12 @@ EXIT:
 
 
 ;-----------------------------------------------------------------------;
-; extern void __fastcall__ _ppu_set_cursor_calc(uint8_t x, uint8_t y)   ;
+; extern void __fastcall__ _ppu_set_cursor_calc(uint16 xy)              ;
+;-----------------------------------------------------------------------;
+; the x position is passed in X register and y position in A register   ;
 ;-----------------------------------------------------------------------;
 .proc __ppu_set_cursor_calc
+
 	TAY 	              ; save the original y value at Y register
 	
 	LSR 	A             ; right shift the y value 3 times
