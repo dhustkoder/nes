@@ -30,7 +30,7 @@ L0037:
 	.byte	$4D,$4F,$52,$45,$20,$54,$48,$41,$4E,$20,$31,$30,$00
 
 ; ---------------------------------------------------------------
-; unsigned char __near__ __fastcall__ test_case (unsigned char)
+; unsigned char __near__ __fastcall__ test_case (const unsigned char)
 ; ---------------------------------------------------------------
 
 .segment	"CODE"
