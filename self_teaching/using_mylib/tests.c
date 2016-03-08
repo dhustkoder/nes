@@ -3,9 +3,14 @@
 static const uint8_t* const arr = "HELLO MY LIB!";
 
 
-bool  __fastcall__ test_case(const uint8_t x)
+bool test_case(const uint8_t x)
 {
-	return x > 10 ? true : false ;
+	if(x == 10) {
+		
+		return true;
+	}
+	
+	return false;
 }
 
 void main(void)
@@ -19,10 +24,10 @@ void main(void)
 	ppu_set_cursor_exact(1,2);
 	
 
-	if(test_case(11))
-		write_str("MORE THAN 10");
-	else
-		write_str("LESS THAN 10");
+	if(test_case(10) == true) { write_str("EQUAL TO 10"); }
+
+	else if(test_case(10) == false) { write_str("NOT EQUAL TO 10"); } 
+
 
 	ppu_set_scroll_enable_render(0x0000);
 	while(1);

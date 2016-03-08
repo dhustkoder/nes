@@ -21,8 +21,8 @@ typedef unsigned int        uint16_t;
 
 /* boolean */
 typedef uint8_t bool;
-#define true  1
-#define false 0
+#define true  ((bool)1)
+#define false ((bool)0)
 
 
 #endif

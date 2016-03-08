@@ -1,4 +1,4 @@
-.include "nes.inc"
+.include "inc/nes.inc"
   
 ; functions that can be called directly from C code ;
 .export _waitvblank 

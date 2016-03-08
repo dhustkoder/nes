@@ -47,7 +47,7 @@
 
 
 .segment "CHARS"
-	.include        "neschar.inc"
+	.include        "inc/neschar.inc"
 
 
 
