@@ -1,7 +1,8 @@
 #ifndef __NESLIB_PPU_H__
 #define __NESLIB_PPU_H__
 #include "nesint.h"
-// PPU:
+
+/* PPU: */
 
 /* PPU_CRTL: $2000
 * BITS: VPHB SINN	
@@ -74,20 +75,20 @@
 
 struct __ppu
 {
-	uint8_t ctrl;                       /* $2000 */
-	uint8_t mask;                       /* $2001 */
-	signed char volatile const status;  /* $2002 */
+	uint8_t ctrl;                      /* $2000 */
+	uint8_t mask;                      /* $2001 */
+	signed char volatile const status; /* $2002 */
 
 	struct {
-		uint8_t addr;                   /* $2003 */
-		uint8_t data;                   /* $2004 */
+		uint8_t addr;              /* $2003 */
+		uint8_t data;              /* $2004 */
 	} sprite;
     
 
 	struct {
-		uint8_t scroll;                 /* $2005 */
-		uint8_t addr;                   /* $2006 */
-		uint8_t data;                   /* $2007 */
+		uint8_t scroll;            /* $2005 */
+		uint8_t addr;              /* $2006 */
+		uint8_t data;              /* $2007 */
 	} vram;
 	
 };
@@ -99,18 +100,18 @@ extern void __fastcall__ waitvblank(void);
 
 
 /* x -> A REGISTER,  y -> X RESGISTER */
-extern void __fastcall__ ppu_set_scroll_enable_render(const uint16_t xy); 
+extern void __fastcall__ ppu_set_scroll_enable_render(uint16_t xy); 
 
 
 /* str's characters address: 
  * low byte -> A REGISTER
  * high byte -> X REGISTER */
-extern void __fastcall__ write_str(const uint8_t* const str);  
+extern void __fastcall__ write_str(const uint8_t* str);  
 
 /* _write_val: write a value (stored on register A) in 
  * PPU.vram.data, decrementing X until 0, then return.
  * must be used with ppu_write_rval and ppu_write_lval macros */
-extern void __fastcall__ _write_val(const uint16_t val_and_times);
+extern void __fastcall__ _write_val(uint16_t val_and_times);
 
 
 

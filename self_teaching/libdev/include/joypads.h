@@ -25,4 +25,8 @@ extern void __fastcall__ update_pad2(void);
 #define IS_KEY_DOWN(pad, key) (((pad & key) != 0))
 #define IS_KEY_UP(pad, key)   (((pad & key) == 0))
 
+#define IS_KEYS_DOWN(pad, key1, key2) (((pad & (key1 | key2)) == (key1 | key2)))
+#define IS_KEYS_UP(pad, key1, key2)   (((pad & (key1 | key2)) != (key1 | key2)))
+
+
 #endif

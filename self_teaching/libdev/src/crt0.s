@@ -1,7 +1,7 @@
-.export         __STARTUP__ : absolute = 1      ; Mark as startup
+.export         __STARTUP__ : absolute = 1          ; Mark as startup
 
-.import         __RAM_START__, __RAM_SIZE__     ; linker generated
-.import         __SRAM_START__, __SRAM_SIZE__     ; linker generated
+.import         __RAM_START__, __RAM_SIZE__         ; linker generated
+.import         __STACK_START__, __STACK_SIZE__     ; linker generated
 .import         _main
 
 
@@ -67,9 +67,9 @@ RESET:
         CLD     ; disable decimal mode
 
                 ; set stack pointer ;
-        lda     #<(__SRAM_START__ + __SRAM_SIZE__)
+        lda     #<(__STACK_START__ + __STACK_SIZE__)
         sta     sp
-        lda     #>(__SRAM_START__ + __SRAM_SIZE__)
+        lda     #>(__STACK_START__ + __STACK_SIZE__)
         sta     sp+1
         JMP     _main    ; jump main
 

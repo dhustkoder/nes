@@ -13,15 +13,15 @@ enum Words
 };
 
 
-
 void main(void)
 {
 	waitvblank();
 	PPU_SET_COLOR_BACK(BLUE);
 	PPU_SET_COLOR_TEXT(WHITE);
+
+	/* show hello message */
 	ppu_set_cursor_exact(1,1);
 	write_str("**HELLO CNESLIB!**");
-	
 	ppu_set_scroll_enable_render(0x0000);
 
 	while(true)
@@ -51,7 +51,8 @@ void main(void)
 		}
 		
 		write_str(words[WPressed]); /* write PRESSED */
-		ppu_set_scroll_enable_render(0x0000);
+
+		ppu_set_scroll_enable_render(0x0000); /* set scroll and enable rendering */
 		
 	}
 }
